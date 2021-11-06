@@ -1,29 +1,24 @@
 package ua.lviv.iot;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class Main {
-    static List<Integer> graph = new ArrayList<>();
-    static List<List<Integer>> neighbours = new ArrayList<>();
-    static Map<Integer, List<Integer>> graphe = new HashMap<>();
+    static Map<Integer, List<Integer>> graph = new HashMap<>();
 
     public static void main(String[] args){
-        readFromFile("input_second.in");
+        readFromFile("input.in");
 
-        writeToFile(bfs());
+        writeToFile(Tarjan.findSCC(graph));
     }
 
 
 
-    public static void writeToFile(int result) {
+    public static void writeToFile(int[] result) {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/resources/output.in"));
-            writer.write("The farthest vertex is " + result + " steps away");
+            writer.write("Number of strongly connected components is " + Arrays.toString(result));
 
             writer.close();
         } catch (IOException exception){
@@ -36,8 +31,7 @@ public class Main {
             BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/" + file));
             String line = reader.readLine();
 
-            graph.add(Integer.parseInt(line.split(" ")[1]));
-            neighbours.add(new ArrayList<>());
+            graph.put(Integer.parseInt(line.split(" ")[1]), new ArrayList<>());
 
             line = reader.readLine();
             while (line != null) {
@@ -53,19 +47,12 @@ public class Main {
         int [] splitInt = Stream.of(line.split(" "))
                 .mapToInt(Integer::parseInt)
                 .toArray();
-        if (!graph.contains(splitInt[0])){
-            graph.add(splitInt[0]);
-            neighbours.add(new ArrayList<>());
-        }
-        if (!graph.contains(splitInt[1])){
-            graph.add(splitInt[1]);
-            neighbours.add(new ArrayList<>());
-        }
-        neighbours.get(graph.indexOf(splitInt[0]))
-                .add(splitInt[1]);
-    }
+        if (!graph.containsKey(splitInt[0]))
+            graph.put(splitInt[0], new ArrayList<>());
 
-    private static int bfs() {
-        return 0;
+        if (!graph.containsKey(splitInt[1]))
+            graph.put(splitInt[1], new ArrayList<>());
+
+        graph.get(splitInt[0]).add(splitInt[1]);
     }
 }
