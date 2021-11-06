@@ -18,7 +18,17 @@ public class Main {
     public static void writeToFile(int[] result) {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/resources/output.in"));
-            writer.write("Number of strongly connected components is " + Arrays.toString(result));
+            Map<Integer, List<Integer>> scc = new HashMap<>();
+            for (int i = 0; i < result.length; i++){
+                if (!scc.containsKey(result[i])){
+                    scc.put(result[i], new ArrayList<>());
+                }
+                scc.get(result[i]).add(i);
+            }
+            writer.write("Number of strongly connected components is " + scc.size());
+            for (Integer comp: scc.keySet()){
+                writer.write("\nStrongly connected components line: " + scc.get(comp));
+            }
 
             writer.close();
         } catch (IOException exception){
@@ -30,7 +40,6 @@ public class Main {
         try {
             BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/" + file));
             String line = reader.readLine();
-
             graph.put(Integer.parseInt(line.split(" ")[1]), new ArrayList<>());
 
             line = reader.readLine();
